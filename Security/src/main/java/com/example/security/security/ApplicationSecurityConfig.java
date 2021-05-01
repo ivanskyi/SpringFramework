@@ -1,6 +1,5 @@
 package com.example.security.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import static com.example.security.security.ApplicationUserRole.ADMIN;
+import static com.example.security.security.ApplicationUserRole.STUDENT;
 
 @Configuration
 @EnableWebSecurity
@@ -40,8 +41,18 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails olehUser = User.builder()
                 .username("oleh")
                 .password(passwordEncoder.encode("123"))
-                .roles("STUDENTS")
+                .roles(STUDENT.name())
                 .build();
-        return new InMemoryUserDetailsManager(olehUser);
+
+        UserDetails evaUser = User.builder()
+                .username("eva")
+                .password(passwordEncoder.encode("321"))
+                .roles(ADMIN.name())
+                .build();
+
+        return new InMemoryUserDetailsManager(
+                olehUser,
+                evaUser
+        );
     }
 }
