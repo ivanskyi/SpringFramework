@@ -10,8 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import static com.example.security.security.ApplicationUserRole.ADMIN;
-import static com.example.security.security.ApplicationUserRole.STUDENT;
+import static com.example.security.security.ApplicationUserRole.*;
 
 @Configuration
 @EnableWebSecurity
@@ -27,8 +26,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/*")
-                .permitAll()
+                .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+                .antMatchers("/api/**").hasRole(STUDENT.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -46,13 +45,20 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
         UserDetails evaUser = User.builder()
                 .username("eva")
-                .password(passwordEncoder.encode("321"))
+                .password(passwordEncoder.encode("123"))
                 .roles(ADMIN.name())
+                .build();
+
+        UserDetails ivanUser = User.builder()
+                .username("ivan")
+                .password(passwordEncoder.encode("123"))
+                .roles(ADMINTRAINEE.name())
                 .build();
 
         return new InMemoryUserDetailsManager(
                 olehUser,
-                evaUser
+                evaUser,
+                ivanUser
         );
     }
 }
